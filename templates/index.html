@@ -64,6 +64,13 @@
             background-color: #f1f1f1;
         }
 
+        .result img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 5px;
+            margin-bottom: 10px;
+        }
+
         table {
             width: 100%;
             margin-top: 20px;
@@ -113,10 +120,15 @@
                 const resultDiv = document.getElementById("result");
                 if (response.ok) {
                     const data = await response.json();
+
+                    // Create an object URL for the uploaded image
+                    const imageURL = URL.createObjectURL(file);
+
+                    // Display the image and prediction result
                     resultDiv.style.display = "block";
                     resultDiv.innerHTML = `
+                        <img src="${imageURL}" alt="Uploaded Image">
                         <strong>Predicted Class:</strong> ${data.predicted_class}<br>
-                        
                     `;
                 } else {
                     const error = await response.json();
@@ -127,10 +139,6 @@
                 console.error("Error predicting:", error);
             }
         });
-
-
-        // Load prediction history on page load
-        loadHistory();
     </script>
 </body>
 </html>
