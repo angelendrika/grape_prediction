@@ -62,6 +62,7 @@
             border: 1px solid #ddd;
             border-radius: 5px;
             background-color: #f1f1f1;
+            text-align: center;
         }
 
         .result img {
@@ -72,21 +73,11 @@
             margin-bottom: 10px;
         }
 
-        table {
-            width: 100%;
-            margin-top: 20px;
-            border-collapse: collapse;
-        }
-
-        table th, table td {
-            padding: 10px;
-            text-align: left;
-            border-bottom: 1px solid #ddd;
-        }
-
-        table th {
-            background-color: #007bff;
-            color: white;
+        .predicted-class {
+            font-size: 18px;
+            font-weight: bold;
+            color: #333;
+            margin-top: 10px;
         }
     </style>
 </head>
@@ -129,7 +120,7 @@
                     resultDiv.style.display = "block";
                     resultDiv.innerHTML = `
                         <img src="${imageURL}" alt="Uploaded Image">
-                        <strong>Predicted Class:</strong> ${data.predicted_class}<br>
+                        <div class="predicted-class">Predicted Class: ${data.predicted_class}</div>
                     `;
                 } else {
                     const error = await response.json();
