@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Prediksi Bahasa Isyarat</title>
+    <title>Prediksi Jenis Anggur</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -86,7 +86,7 @@
 </head>
 <body>
     <div class="container">
-        <h1>Prediksi Bahasa Isyarat</h1>
+        <h1>Prediksi Jenis Anggur</h1>
         <p>Unggah gambar anda</p>
         <form id="uploadForm" enctype="multipart/form-data">
             <input type="file" id="fileInput" name="file" accept="image/*">
@@ -141,13 +141,6 @@
                     predictedClassSpan.textContent = data.predicted_class;
                     probabilitySpan.textContent = (data.probability * 100).toFixed(2);
 
-                    // Tampilkan rekomendasi tanaman
-                    recommendationList.innerHTML = ""; // Hapus rekomendasi lama
-                    data.recommendations.forEach(plant => {
-                        const listItem = document.createElement("li");
-                        listItem.textContent = plant;
-                        recommendationList.appendChild(listItem);
-                    });
 
                     // Tampilkan gambar yang diunggah
                     const reader = new FileReader();
@@ -168,7 +161,6 @@
             resultContainer.style.display = "none"; // Sembunyikan kontainer hasil
             predictedClassSpan.textContent = "-";
             probabilitySpan.textContent = "-";
-            recommendationList.innerHTML = ""; // Kosongkan daftar rekomendasi
             uploadedImage.src = "#"; // Reset gambar unggah
 
             // Scroll kembali ke atas
