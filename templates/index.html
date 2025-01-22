@@ -130,7 +130,7 @@
                     resultDiv.style.display = "block";
                     resultDiv.innerHTML = `
                         <strong>Predicted Class:</strong> ${data.predicted_class}<br>
-                        <strong>Probability:</strong> ${(data.probability * 100).toFixed(2)}
+                        <strong>Probability:</strong> ${(data.probability * 100).toFixed(2)}%
                     `;
                 } else {
                     const error = await response.json();
