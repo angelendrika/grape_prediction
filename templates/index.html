@@ -3,171 +3,171 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Prediksi Jenis Anggur</title>
+    <title>Grape Prediction</title>
     <style>
         body {
             font-family: Arial, sans-serif;
             margin: 0;
             padding: 0;
             background-color: #f8f9fa;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
         }
 
         .container {
             max-width: 600px;
-            margin: 50px auto;
-            background-color: #ffffff;
-            border-radius: 8px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            background: white;
             padding: 20px;
-            text-align: center;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
         }
 
         h1 {
-            color: #00796b;
+            text-align: center;
+            color: #333;
+        }
+
+        form {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            margin-top: 20px;
         }
 
         input[type="file"] {
-            margin: 20px 0;
             padding: 10px;
             border: 1px solid #ddd;
-            border-radius: 4px;
+            border-radius: 5px;
         }
 
         button {
-            background-color: #00796b;
-            color: #ffffff;
+            padding: 10px 15px;
             border: none;
-            padding: 10px 20px;
-            border-radius: 4px;
+            background-color: #007bff;
+            color: white;
+            border-radius: 5px;
             cursor: pointer;
-            font-size: 16px;
+            transition: background-color 0.3s;
         }
 
         button:hover {
-            background-color: #00574b;
+            background-color: #0056b3;
         }
 
         .result {
-            margin-top: 30px;
-        }
-
-        .result-box {
-            border: 1px solid #00796b;
-            padding: 15px;
-            border-radius: 6px;
-            background-color: #e8f5e9;
-            text-align: left;
-        }
-
-        .recommendations {
             margin-top: 20px;
-            text-align: left;
-        }
-
-        ul {
-            list-style: none;
-            padding: 0;
-        }
-
-        ul li {
-            background-color: #c8e6c9;
-            margin: 5px 0;
             padding: 10px;
-            border-radius: 4px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            background-color: #f1f1f1;
         }
 
-        img {
-            max-width: 100%;
-            height: auto;
-            border: 1px solid #ddd;
+        table {
+            width: 100%;
             margin-top: 20px;
+            border-collapse: collapse;
+        }
+
+        table th, table td {
+            padding: 10px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        table th {
+            background-color: #007bff;
+            color: white;
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>Prediksi Jenis Anggur</h1>
-        <p>Unggah gambar anda</p>
-        <form id="uploadForm" enctype="multipart/form-data">
-            <input type="file" id="fileInput" name="file" accept="image/*">
-            <br>
-            <button type="button" id="predictButton">Prediksi</button>
+        <h1>Grape Prediction</h1>
+        <form id="uploadForm">
+            <label for="file">Upload an image:</label>
+            <input type="file" id="file" name="file" accept="image/*" required>
+            <button type="submit">Predict</button>
         </form>
+        <div class="result" id="result" style="display: none;"></div>
 
-        <!-- Kontainer hasil -->
-        <div id="resultContainer" class="result" style="display: none;">
-            <h2>Hasil Prediksi</h2>
-            <div class="result-box">
-                <p><strong>Prediksi:</strong> <span id="predictedClass">-</span></p>
-<!--                 <p><strong>Probabilitas:</strong> <span id="probability">-</span>%</p> -->
-            </div>
-
-            <button type="button" id="resetButton">Reset</button>
-        </div>
+        <h2>Prediction History</h2>
+        <table id="historyTable">
+            <thead>
+                <tr>
+                    <th>Grape Type</th>
+                    <th>Confidence Score</th>
+                    <th>Timestamp</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- History rows will be inserted here -->
+            </tbody>
+        </table>
     </div>
 
     <script>
-        const fileInput = document.getElementById("fileInput");
-        const predictButton = document.getElementById("predictButton");
-        const resultContainer = document.getElementById("resultContainer");
-        const predictedClassSpan = document.getElementById("predictedClass");
-        const probabilitySpan = document.getElementById("probability");
-        const uploadedImage = document.getElementById("uploadedImage");
-        const resetButton = document.getElementById("resetButton");
+        document.getElementById("uploadForm").addEventListener("submit", async function(event) {
+            event.preventDefault();
 
-        predictButton.addEventListener("click", () => {
+            const fileInput = document.getElementById("file");
             const file = fileInput.files[0];
-            if (!file) {
-                alert("Silakan pilih file gambar terlebih dahulu.");
-                return;
-            }
+            if (!file) return;
 
             const formData = new FormData();
             formData.append("file", file);
 
-            fetch("/predict", {
-                method: "POST",
-                body: formData
-            })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.error) {
-                        alert(data.error);
-                        return;
-                    }
+            try {
+                const response = await fetch("/predict", {
+                    method: "POST",
+                    body: formData
+                });
 
-                    // Tampilkan hasil prediksi
-                    predictedClassSpan.textContent = data.predicted_class;
-                    probabilitySpan.textContent = (data.probability * 100).toFixed(2);
-
-
-                    // Tampilkan gambar yang diunggah
-                    const reader = new FileReader();
-                    reader.onload = (e) => {
-                        uploadedImage.src = e.target.result;
-                    };
-                    reader.readAsDataURL(file);
-
-                    // Tampilkan kontainer hasil
-                    resultContainer.style.display = "block";
-                })
-                .catch(error => console.error("Error:", error));
+                const resultDiv = document.getElementById("result");
+                if (response.ok) {
+                    const data = await response.json();
+                    resultDiv.style.display = "block";
+                    resultDiv.innerHTML = `
+                        <strong>Predicted Class:</strong> ${data.predicted_class}<br>
+                        <strong>Probability:</strong> ${(data.probability * 100).toFixed(2)}%
+                    `;
+                } else {
+                    const error = await response.json();
+                    resultDiv.style.display = "block";
+                    resultDiv.textContent = `Error: ${error.error}`;
+                }
+            } catch (error) {
+                console.error("Error predicting:", error);
+            }
         });
 
-        resetButton.addEventListener("click", () => {
-            // Reset formulir
-            fileInput.value = "";
-            resultContainer.style.display = "none"; // Sembunyikan kontainer hasil
-            predictedClassSpan.textContent = "-";
-            probabilitySpan.textContent = "-";
-            uploadedImage.src = "#"; // Reset gambar unggah
+        async function loadHistory() {
+            try {
+                const response = await fetch("/");
+                if (response.ok) {
+                    const historyData = await response.json();
+                    const tableBody = document.querySelector("#historyTable tbody");
 
-            // Scroll kembali ke atas
-            window.scrollTo({
-                top: 0,
-                behavior: "smooth"
-            });
-        });
+                    historyData.predictions.forEach(prediction => {
+                        const row = document.createElement("tr");
+
+                        row.innerHTML = `
+                            <td>${prediction.grape_type}</td>
+                            <td>${prediction.confidence_score.toFixed(2)}%</td>
+                            <td>${prediction.prediction_timestamp}</td>
+                        `;
+
+                        tableBody.appendChild(row);
+                    });
+                }
+            } catch (error) {
+                console.error("Error loading history:", error);
+            }
+        }
+
+        // Load prediction history on page load
+        loadHistory();
     </script>
 </body>
 </html>
