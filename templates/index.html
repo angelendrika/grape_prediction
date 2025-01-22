@@ -91,20 +91,6 @@
             <button type="submit">Predict</button>
         </form>
         <div class="result" id="result" style="display: none;"></div>
-
-        <h2>Prediction History</h2>
-        <table id="historyTable">
-            <thead>
-                <tr>
-                    <th>Grape Type</th>
-                    <th>Confidence Score</th>
-                    <th>Timestamp</th>
-                </tr>
-            </thead>
-            <tbody>
-                <!-- History rows will be inserted here -->
-            </tbody>
-        </table>
     </div>
 
     <script>
@@ -130,7 +116,7 @@
                     resultDiv.style.display = "block";
                     resultDiv.innerHTML = `
                         <strong>Predicted Class:</strong> ${data.predicted_class}<br>
-                        <strong>Probability:</strong> ${(data.probability * 100).toFixed(2)}%
+                        // <strong>Probability:</strong> ${(data.probability * 100).toFixed(2)}%
                     `;
                 } else {
                     const error = await response.json();
@@ -142,29 +128,6 @@
             }
         });
 
-        async function loadHistory() {
-            try {
-                const response = await fetch("/");
-                if (response.ok) {
-                    const historyData = await response.json();
-                    const tableBody = document.querySelector("#historyTable tbody");
-
-                    historyData.predictions.forEach(prediction => {
-                        const row = document.createElement("tr");
-
-                        row.innerHTML = `
-                            <td>${prediction.grape_type}</td>
-                            <td>${prediction.confidence_score.toFixed(2)}%</td>
-                            <td>${prediction.prediction_timestamp}</td>
-                        `;
-
-                        tableBody.appendChild(row);
-                    });
-                }
-            } catch (error) {
-                console.error("Error loading history:", error);
-            }
-        }
 
         // Load prediction history on page load
         loadHistory();
